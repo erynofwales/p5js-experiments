@@ -2,28 +2,6 @@ const DEBUG = false;
 
 let lines = new Array();
 
-class Point {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-  }
-
-  length() {
-    return Math.sqrt(this.x * this.x + this.y * this.y);
-  }
-
-  normalize() {
-    let length = this.length();
-    this.x = this.x / length;
-    this.y = this.y / length;
-  }
-
-  scale(factor) {
-    this.x = this.x * factor;
-    this.y = this.y * factor;
-  }
-}
-
 class Line {
   constructor(point, length) {
     this.point = point;
@@ -31,11 +9,11 @@ class Line {
   }
 
   draw(mousePoint) {
-    let distance = this._distanceBetweenPointAndPoint(mousePoint);
-    let weight = this._mapValueInRangeToRange(distance, 0, 600, 1, 12);
+    let distance = this.point.distanceTo(mousePoint);
+    let weight = 1; //mapValueInRangeToRange(distance, 0, 600, 1, this.length, Clamp.Yes);
 
     colorMode(HSB, 255);
-    let hue = this._mapValueInRangeToRange(distance, 0, 800, 140, 200);
+    let hue = mapValueInRangeToRange(distance, 0, 800, 140, 200, Clamp.Yes);
     stroke(hue, 180, 255);
     strokeCap(SQUARE);
     strokeWeight(weight);
@@ -48,11 +26,6 @@ class Line {
 
     const halfLength = this.length / 2.0;
 
-    // line(
-    //   this.point.x - halfLength,
-    //   this.point.y,
-    //   this.point.x + halfLength,
-    //   this.point.y);
     line(
       this.point.x + pointMouseVectorNormal1.x * halfLength,
       this.point.y + pointMouseVectorNormal1.y * halfLength,
@@ -86,18 +59,6 @@ class Line {
         this.point.x + pointMouseVectorNormal2.x * halfLength,
         this.point.y + pointMouseVectorNormal2.y * halfLength);
     }
-  }
-
-  /// Compute the Euclidean distance between @c this.point and the argument.
-  /// @see https://en.wikipedia.org/wiki/Euclidean_distance
-  _distanceBetweenPointAndPoint(point) {
-    return Math.sqrt(Math.pow(this.point.x - point.x, 2) + Math.pow(this.point.y - point.y, 2));
-  }
-
-  /// Map an input value in an input range to a value in the output range.
-  /// @see https://stackoverflow.com/questions/5731863/mapping-a-numeric-range-onto-another
-  _mapValueInRangeToRange(input, inputStart, inputEnd, outputStart, outputEnd) {
-    return outputStart + ((outputEnd - outputStart) / (inputEnd - inputStart)) * (input - inputStart);
   }
 }
 
